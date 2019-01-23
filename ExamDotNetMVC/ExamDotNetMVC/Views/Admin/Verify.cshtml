@@ -1,0 +1,63 @@
+﻿@using ExamDotNetMVC.Controllers
+@model IEnumerable<ExamDotNetMVC.Models.UserDetail>
+<div class="container" style="box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px;">
+    <div style="height:527px;overflow-y: auto">
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Experience)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                            if (item.Status == "UnChecked")
+                            {
+                                <span class="label label-danger" style="font-family: Calibri;font-size: 13px">@item.Status</span>
+                            }
+                            else
+                            {
+                                <span class="label label-success" style="font-family: Calibri;font-size: 13px">@item.Status</span>
+                            }
+
+                        }
+                        @*@Html.DisplayFor(modelItem => item.Name)*@
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Experience)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    <td>
+
+                        @Html.ActionLink("Verify", "DataView", new {id = item.UserId})
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>

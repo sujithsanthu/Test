@@ -1,0 +1,79 @@
+﻿@using ExamDotNetMVC.Models
+@model ExamDotNetMVC.Models.ExamDetail
+
+
+
+@{
+    ViewBag.Title = "VerifyAnswers";
+}
+
+<h2>StartExam</h2>
+
+@using (Html.BeginForm("VerifyAnswer", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>ExamDetail</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        
+        @{
+            int count = int.Parse(Request.Cookies["AnswerCount"].Value);
+
+            var obj = (List<ExamDetail>)ViewBag.ExamDetails;
+
+            //var object1 = objects[count];
+            //foreach (var obj in objects[0].)
+            //{
+            //    count++;
+            //    if (count <= 10)
+            //    {
+            <div class="form-group">
+
+                <div class="col-md-10">
+                    <input type="hidden" name="Name" value="@Session["QName"]" />
+
+                </div>
+            </div>
+            <div id="@obj[count].QuestionNo" style="border: 2px solid black;padding: 10px;margin: 15px;box-shadow: 4px 4px 20px black">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.QuestionNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="text" name="QuestionNo" value="@obj[count].QuestionNo" class="form-control" readonly="readonly" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <input type="hidden" name="Id" value="@obj[count].Id" class="form-control" readonly="readonly" />
+                        <input type="hidden" name="Answer" value="@obj[count].Answer" class="form-control" readonly="readonly" />
+                        @Html.Raw(obj[count].Answer)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Marks, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="text" name="Marks" value="@obj[count].Marks" readonly="readonly" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="text" name="Status" value="" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Next" class="btn btn-primary" />
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index1")
+</div>

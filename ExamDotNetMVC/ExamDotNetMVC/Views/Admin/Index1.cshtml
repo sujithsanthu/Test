@@ -1,0 +1,146 @@
+﻿@using ExamDotNetMVC.Models
+@model IEnumerable<ExamDotNetMVC.Models.ExamDetail>
+
+@{
+   
+    var Qid = 0;
+    double Qmarks = 0;
+    double QAmarks = 0;
+    double Percentage = 0;
+    int QCheck = 0;
+    List<Paging> a1=new List<Paging>();
+}
+<div class="container" style="box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+<div style="margin: 21px;padding: 10px;width:50%">
+
+    @{
+        var obj = (UserDetail)ViewBag.UserDetails;
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th>Name:</th>
+                <td>@obj.Name</td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td>@obj.Email</td>
+            </tr>
+            <tr>
+                <th> Years of Experience:</th>
+                <td> @obj.Experience Years</td>
+            </tr>
+            <tr>
+                <th>Mobile No: </th>
+                <td>@obj.Phone </td>
+            </tr>
+        </table>
+    }
+</div>
+  
+<table class="table table-striped table-bordered">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.QuestionNo)
+        </th>
+        <th>
+            Question
+        </th>
+        <th>
+            Marks
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            <td>
+                @{
+                    Paging a=new Paging();
+                    a.Id = item.Id;
+                    a.Status = item.Status;
+                    a1.Add(a);
+                    Qid = Qid + 1;
+                    Qmarks = Qmarks + double.Parse(item.Marks);
+                    QAmarks = QAmarks + double.Parse(item.AMarks);
+                    Percentage = ((QAmarks * 100) / Qmarks);
+                    if (item.Status == "Checked")
+                    {
+                        QCheck= QCheck + 1;
+                    }
+                    Session["Ids"] = a1;
+                    Session["AName"] = item.Name;
+
+                }
+                @Qid
+            </td>
+
+            <td>
+                @Html.Raw(item.QuestionNo)
+            </td>
+            <td>
+                @{
+                    if (@item.Status == "UnChecked")
+                    {
+                        <p style="color: red">@item.Status</p>
+                    }
+                    else
+                    {
+                      
+                        
+                        <p style="color: green">@item.Status</p>
+                    }
+                }
+
+            </td>       
+            <td>
+                @Html.ActionLink("Assign Marks", "Edit1", new { id = item.Id }) 
+            </td>
+        </tr>
+       
+    }
+  
+
+</table>
+<div>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>
+                Total Marks
+            </th>
+            <td>
+                @Qmarks
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Marks Obtained
+            </th>
+            <td>
+                @QAmarks
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Percentage
+            </th>
+            <td>
+                @{
+                    if (Percentage < 60)
+                    {
+
+                        <p style="color: red">@Percentage %</p>
+                    }
+                    else
+                    {
+                        <p style="color: green">@Percentage %</p>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+
+</div>
+</div>
+

@@ -1,0 +1,428 @@
+﻿@using ExamDotNetMVC.Models
+@model ExamDotNetMVC.Models.ExamDetail
+
+@{
+    ViewBag.Title = "Edit1";
+    var count = 0;
+
+    var obje = (List<ExamDetail>)ViewBag.ExamDetail;
+    var prev = 0;
+    var next = 0;
+    int attempt = 0;
+    int unattempt = 10;
+
+}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="~/Scripts/rereturn.js"></script>
+<style>
+    .pagination {
+        padding: 10px;
+        background-color: white;
+        border-radius: 50%;
+        border: 2px solid #2e6da4;
+        height: 45px;
+        width: 45px;
+        text-align: center;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+        .pagination:hover {
+            color: white;
+            background-color: #2e6da4;
+        }
+
+    .paginationlink a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .active {
+        background-color: #2e6da4;
+        color: white;
+        border-color: black;
+    }
+
+    .success {
+        background-color: #4caf50;
+        color: white;
+        border-color: black;
+    }
+
+    .danger {
+        background-color: #e74507;
+        color: white;
+        border-color: black;
+    }
+
+    .AMarks:hover {
+        font-size: 42px;
+        background-color: #4caf50;
+        border-radius: 50%;
+    }
+
+    .AMarks1:hover {
+        font-size: 42px;
+        background-color: #00fa9a;
+        border-radius: 50%;
+    }
+
+    .AMarks2:hover {
+        font-size: 42px;
+        background-color: #ffd700;
+        border-radius: 50%;
+    }
+
+    .AMarks3:hover {
+        font-size: 42px;
+        background-color: #bdb76b;
+        border-radius: 50%;
+    }
+
+    .AMarks4:hover {
+        font-size: 42px;
+        background-color: #ff0000;
+        border-radius: 50%;
+    }
+</style>
+<noscript>
+    <h2>
+        JavaScript is disabled! Why you want to do so?
+        Please enable JavaScript in your web browser!
+    </h2>
+
+    <style type="text/css">
+        #ExamContainer {
+            display: none;
+        }
+    </style>
+</noscript>
+<script>
+
+    function LoginRequired() {
+        var a;
+        swal({
+            title: "Are you sure?",
+            text: "Once Submitted, you will not be able to answer anymore",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    a = "Submited";
+                    Quit(a);
+
+
+                } else {
+                    swal("You can proceed with the Exam!");
+                }
+
+            });
+    }
+    function Quit(a) {
+        if (a == "Submited") {
+
+            document.getElementById("myForm").action = "/WebUsers/Final";
+            document.getElementById("myForm").submit();
+        }
+    }
+</script>
+@using (Html.BeginForm("Edit10", "WebUsers", FormMethod.Post, new { @id = "myForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-9" style="padding: 10px">
+            <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+                <div class="form-horizontal">
+                    <div>
+                        @Html.HiddenFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "nameid" } })
+                        Session["AName"] = model.Name;
+                        @*@Html.HiddenFor(model => model.QuestionNo, new { htmlAttributes = new { @class = "form-control" } })*@
+                        <input type="hidden" id="QuestionNo" name="QuestionNo" value="intial" />
+                        <input type="hidden" name="Status" Value="UnChecked" />
+                        <input type="hidden" id="Marks" name="Marks" Value="@Model.Marks" />
+                        <input type="hidden" id="AMarks" name="AMarks" Value="@Model.AMarks" />
+                    </div>
+
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Id)
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-offset-2 col-md-8">
+                            </div>
+                            <div class="col-md-2">
+
+                                <h2>@Model.Marks Marks</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-control" style="height: 210px;width:100%;overflow-y: auto">
+                                <h3>Problem</h3>
+                                @*@Html.Raw(Model.QuestionNo)*@
+                                <div id="Question"></div>
+                            </div>
+                        </div>
+                    </div><br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.TextAreaFor(model => model.Answer, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div><br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            @*@for (int i = 0; i < 10; i++)
+                                {
+                                    if (Model.Id.Equals(obje[i].Id))
+                                    {
+                                        if (i == 0)
+                                        {
+                                            prev =
+                                                obje[i].Id;
+                                        }
+                                        else
+                                        {
+                                            prev =
+                                                obje[i - 1].Id;
+                                        }
+                                    }
+                                }
+                                @for (int i = 0; i < 10; i++)
+                                {
+                                    if (Model.Id.Equals(obje[i].Id))
+                                    {
+                                        if (i == 9)
+                                        {
+                                            next =
+                                                obje[i].Id;
+                                        }
+                                        else
+                                        {
+                                            next =
+                                                obje[i + 1].Id;
+                                        }
+                                    }
+                                }
+                                @{ var url = "/WebUsers/Edit1/" + prev;}
+                                @{ var urlnext = "/WebUsers/Edit1/" + next;}*@
+                            @*<a href=@url class="btn btn-primary col-md-offset-2">Previous</a>*@
+                            @{
+                                
+                                
+                                    <button type="button" class="btn btn-primary col-md-offset-2" onclick="getQuestion(@ViewBag.ExamDetail)" id="btnPrev">Previous</button>
+                                    <input type="submit" value="Save" class="btn btn-success col-md-offset-6"/>
+                                    <button type="button" class="btn btn-primary" onclick="getQuestion(@ViewBag.ExamDetail)" id="btnNext">Next</button>
+                                @*<a href=@urlnext class="btn btn-primary ">Next</a>*@
+                                
+                            }
+                        </div>
+
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-3" style="padding: 10px">
+            <div id="time" style="margin: 15px;box-shadow: 1px 1px 21px gray;padding:40px;border-radius: 5px;font-size: xx-large;padding-left: 120px"></div>
+            <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding:40px;border-radius: 5px">
+                <p><b>QuestionNo</b></p>
+                @{
+                    foreach (var obj in (List<ExamDetail>)ViewBag.ExamDetail)
+                    {
+                        count = count + 1;
+                        if (obj.Id == Model.Id && !string.IsNullOrEmpty(obj.Answer.ToString()))
+                        {
+                            attempt = attempt + 1;
+                            //@Html.ActionLink(count.ToString(), "Edit1", new {controller = "WebUsers", id = obj.Id},
+                            // new {@class = "pagination active"})
+                            <div class="pagination active" onclick="getQuestion(@obj.Id)">@count.ToString()</div>
+                        }
+                        else if (obj.Id == Model.Id)
+                        {
+                            //@Html.ActionLink(count.ToString(), "Edit1", new {controller = "WebUsers", id = obj.Id},
+                            // new {@class = "pagination active"})
+                            <div class="pagination active" onclick="getQuestion(@obj.Id)">@count.ToString()</div>
+                        }
+                        else if (string.IsNullOrEmpty(obj.Answer.ToString()))
+                        {
+
+
+                            <div class="pagination danger" onclick="getQuestion(@obj.Id)">@count.ToString()</div>
+                            //@Html.ActionLink(count.ToString(), "Edit1", new {controller = "WebUsers", id = obj.Id},
+                            //new {@class = "pagination danger"})
+                        }
+                        else
+                        {
+                            {
+                                attempt = attempt + 1;
+                            }
+
+                            //@Html.ActionLink(count.ToString(), "Edit1", new {controller = "WebUsers", id = obj.Id},
+                            // new {@class = "pagination success"})
+                            <div class="pagination success" onclick="getQuestion(@obj.Id)">@count.ToString()</div>
+                        }
+
+                    }
+                }
+
+            </div>
+
+            <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+                <div style="overflow-x:auto">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <th>No of Questions</th>
+                            <th>Questions Attempted</th>
+                            <th>Question UnAttempted</th>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+
+                            <td>@attempt</td>
+                            @{ unattempt = unattempt - attempt;}
+                            <td>@unattempt</td>
+                        </tr>
+
+
+                    </table>
+
+                </div>
+                <input class="btn btn-danger" value="Exit Exam" type="button" onclick="LoginRequired()" />
+            </div>
+
+        </div>
+    </div>
+    <script>
+        function getQuestion(id) {
+            alert(id);
+            var URL = 'http://localhost:53349/api/ExamDetailsAPI/' + id;
+            $.ajax(
+                {
+                    url: URL,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data, status, xhr) {
+                        document.getElementById("QuestionNo").value = data.QuestionNo;
+                        document.getElementById("Question").innerHTML = data.QuestionNo;
+                       },
+                    error: function (xhr, status, error) {
+                        alert(error);
+                    }
+                });
+        }
+        $(function () {
+            $("form").attr("action", "/WebUsers/Edit1")
+            $('#Answer').froalaEditor();
+        });
+        var minutes = 1;
+        var seconds = 0;
+        function startTimer(duration, display) {
+            var timer = duration,
+                minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                setCookie("minutes"+"@ViewBag.Name", minutes.toString(), 1);
+                setCookie("seconds"+"@ViewBag.Name", seconds.toString(), 1);
+
+                if (--timer < 0) {
+                    timer = 0;
+                    if (seconds == 00 && minutes == 0) {
+                        //alert("bye")
+                        //  deleteAllCookies();
+                        Quit("Submited");
+
+                    }
+                    //deleteAllCookies();
+
+                }
+            }, 1000);
+        }
+
+
+        window.onload = function () {
+            var minutes_data = getCookie("minutes"+"@ViewBag.Name");
+            var seconds_data = getCookie("seconds"+"@ViewBag.Name");
+            var timer_amount = (60 * 30); //default
+            if (!minutes_data || !seconds_data) {
+                //no cookie found use default
+            }
+            else {
+                timer_amount = parseInt(minutes_data * 60) + parseInt(seconds_data)
+            }
+
+            var fiveMinutes = timer_amount,
+                display = document.querySelector('#time');
+            startTimer(fiveMinutes, display); //`enter code here`
+            document.addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+            }, false);
+            document.addEventListener("keydown", function (e) {
+
+                // "F12" key
+                if (event.keyCode == 123) {
+                    disabledEvent(e);
+                }
+            }, false);
+            function disabledEvent(e) {
+                if (e.stopPropagation) {
+                    e.stopPropagation();
+                } else if (window.event) {
+                    window.event.cancelBubble = true;
+                }
+                e.preventDefault();
+                return false;
+            }
+        };
+
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires;
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            }
+            return "";
+        }
+        function deleteAllCookies() {
+            //alert("delere")
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++)
+                deleteCookie(cookies[i].split("=")[0] + " =; expires = Thu, 01 Jan 1970 00:00:00 UTC");
+        }
+        function deleteCookie(name) {
+            setCookie(name, "", -1);
+        }
+
+    </script>
+    @Html.Partial("_ScriptSharing")
+    //@Html.RenderPartial("_ScriptSharing")
+
+
+
+}
+
+
+

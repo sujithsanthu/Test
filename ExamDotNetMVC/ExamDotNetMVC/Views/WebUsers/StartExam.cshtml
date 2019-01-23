@@ -1,0 +1,71 @@
+﻿@using ExamDotNetMVC.Models
+@model ExamDotNetMVC.Models.ExamDetail
+
+
+
+@{
+    ViewBag.Title = "StartExam";
+}
+
+<h2>StartExam</h2>
+
+@using (Html.BeginForm("StartExam", "WebUsers", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>ExamDetail</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+
+            <div class="col-md-10">
+                <input type="hidden" name="Name" value="@Session["Name"]" />
+
+            </div>
+        </div>
+        @{
+            int count = int.Parse(Request.Cookies["Count"].Value);
+
+            var obj = (List<AddQuestion>) ViewBag.AddQuestion;
+                <div id="@obj[count].Question" style="padding: 10px;margin: 15px;box-shadow: 4px 4px 20px black">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.QuestionNo, htmlAttributes: new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            <input type="hidden" name="QuestionNo" value="@obj[count].Question" class="form-control" readonly="readonly" />                   
+                            <div class="form-control" style="height: 210px;width:100%;overflow-y: auto"> @Html.Raw(@obj[count].Question)</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Answer, htmlAttributes: new {@class = "control-label col-md-2"})
+                        <div class="col-md-10">
+                            <textarea id="Answer" name="Answer" style="height: 210px" ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-10">
+                            <input type="hidden" name="Marks" value="@obj[count].Marks"/>
+                            
+                        </div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Next" class="btn btn-primary"/>
+                        </div>
+                    </div>
+
+                </div>
+    }
+    </div>
+    <script>
+        $(function() {
+            $('#Answer').froalaEditor();
+        });
+    </script>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

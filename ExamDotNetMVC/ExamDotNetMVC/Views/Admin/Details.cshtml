@@ -1,0 +1,31 @@
+﻿@model ExamDotNetMVC.Models.AddQuestion
+
+@{
+    ViewBag.Title = "Details";
+}
+<div class="container" style="box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+    <h2>Details</h2>
+
+    <div>
+        
+        <hr />
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Question)</th>
+                <td>@Html.Raw(Model.Question)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.QLevel)</th>
+                <td>@Html.DisplayFor(model => model.QLevel)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Marks)</th>
+                <td> @Html.DisplayFor(model => model.Marks)</td>
+            </tr>
+        </table>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Questionid }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</div>

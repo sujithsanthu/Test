@@ -1,0 +1,117 @@
+﻿@model IEnumerable<ExamDotNetMVC.Models.MarksDetail>
+
+@*<p>
+    @Html.ActionLink("Create New", "Create")
+</p>*@
+@{
+    var grid = new WebGrid(Model, canPage: true, rowsPerPage: 2,  
+        selectionFieldName: "selectedRow", ajaxUpdateContainerId: "gridContent");  
+    grid.Pager(WebGridPagerModes.All);}  
+<div class="container" style="box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+@using (Html.BeginForm("ViewResult","Admin",FormMethod.Post))
+{
+
+
+  
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="input-group col-xs-12">
+                <select name="Option" class="form-control">
+                    <option value="Name">Name</option>
+                    <option value="TotalMarks">TotalMarks</option>
+                    <option value="AssignedMarks">AssignedMarks</option>
+                    <option value="Percentage">Percentage</option>
+                </select>
+                <div class="col-xs-4">
+                    <input type="text" class="form-control" placeholder="Search&hellip;" name="Name">
+                
+                </div>
+                <div class="col-xs-4">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-success">Go</button>
+                    </span>
+                </div>
+            </div>
+           
+            </div>
+        </div>
+   
+    <br/>
+    <div style="height:527px;overflow-y: auto">
+        @*<table class="table table-bordered table-striped">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalMarks)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AssignedMarks)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Percentage)
+                </th>
+
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalMarks)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AssignedMarks)
+                    </td>
+                    <td>
+                        @{
+                            if (item.Percentage < 50)
+                            {
+                                <span class="label label-danger" style="font-family: Calibri;font-size: 15px"> @Html.DisplayFor(modelItem => item.Percentage)</span>
+                            }
+                            else
+                            {
+                                <span class="label label-success" style="font-family: Calibri;font-size: 15px"> @Html.DisplayFor(modelItem => item.Percentage)</span>
+                            }
+                        }
+
+                    </td>
+
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Name }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Name }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Name })
+
+                </tr>
+            }
+
+        </table>*@
+        @grid.GetHtml(tableStyle: "table table-bordered table-striped",
+            mode: WebGridPagerModes.All,
+            firstText: "<< First",
+            previousText: "< Prev",
+            nextText: "Next >",
+            lastText: "Last >>",
+            headerStyle: "info",
+            footerStyle: "webgrid-footer",
+            alternatingRowStyle: "webgrid-alternating-row",
+            selectedRowStyle: "webgrid-selected-row",
+
+            rowStyle: "gridrow",
+            columns: grid.Columns(
+                grid.Column("Name", "Name"),
+                grid.Column("AssignedMarks", "AssignedMarks"),
+                grid.Column("TotalMarks", "TotalMarks"),
+                grid.Column("Percentage", "Percentage", style: "percentage")
+
+                )
+
+            ) 
+    </div>
+}
+</div>
+

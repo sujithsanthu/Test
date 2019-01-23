@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "Final";
+}
+<script src="~/Scripts/rereturn.js"></script>
+<div class="container" style="background-color:white;padding: 21px;box-shadow: 2px 2px 21px gray;border-left: 4px solid #008080">
+    <form action="/WebUsers/FeedBack" method="post">
+        
+        <h3>Exam Submitted Successfully</h3>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">FeedBack</button>
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">FeedBack</h4>
+                    </div>
+                    <div class="modal-body">
+                        @*<input type="text" name="Comment" id="Comment" placeholder="Please Give us FeedBack" class="form-control">*@
+                        <textarea rows="5" name="Comment" id="Comment" placeholder="Please Give us FeedBack" class="form-control"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-success" value="Submit">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+

@@ -1,0 +1,371 @@
+﻿
+@using ExamDotNetMVC.Models
+@model ExamDotNetMVC.Models.ExamDetail
+@{
+    ViewBag.Title = "Edit1";
+    var count = 0;
+
+    var obje = (List<ExamDetail>)ViewBag.ExamDetail;
+    var prev = 0;
+    var next = 0;
+    int attempt = 0;
+    int unattempt = 10;
+
+}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<style>
+    .pagination {
+        padding: 10px;
+        background-color: white;
+        border-radius: 50%;
+        border: 2px solid #2e6da4;
+        height: 45px;
+        width: 45px;
+        text-align: center;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+        .pagination:hover {
+            color: white;
+            background-color: #2e6da4;
+        }
+
+    .paginationlink a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .active {
+        background-color: #2e6da4;
+        color: white;
+        border-color: black;
+    }
+
+    .success {
+        background-color: #4caf50;
+        color: white;
+        border-color: black;
+    }
+
+    .danger {
+        background-color: #e74507;
+        color: white;
+        border-color: black;
+    }
+
+    .AMarks:hover {
+        font-size: 42px;
+        background-color: #4caf50;
+        border-radius: 50%;
+    }
+
+    .AMarks1:hover {
+        font-size: 42px;
+        background-color: #00fa9a;
+        border-radius: 50%;
+    }
+
+    .AMarks2:hover {
+        font-size: 42px;
+        background-color: #ffd700;
+        border-radius: 50%;
+    }
+
+    .AMarks3:hover {
+        font-size: 42px;
+        background-color: #1e88e5;
+        border-radius: 50%;
+    }
+
+    .AMarks4:hover {
+        font-size: 42px;
+        background-color: #ff0000;
+        border-radius: 50%;
+    }
+</style>
+<script>
+    function LoginRequired() {
+        var a;
+        swal({
+                title: "Are you sure?",
+                text: "Once Submitted, you will not be able to answer anymore",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    a = "Submited";
+                    Quit(a);
+
+
+                } else {
+                    swal("You can proceed with the Exam!");
+                }
+
+            });
+    }
+    function Quit(a) {
+        if (a == "Submited") {
+
+            document.getElementById("myForm").action = "/WebUsers/Final";
+            document.getElementById("myForm").submit();
+        }
+    }
+</script>
+@using (Html.BeginForm("Edit1", "Admin", FormMethod.Post, new { @id = "myForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-9" style="padding: 10px">
+            <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+                <div class="form-horizontal">
+                    <div>
+                        @Html.HiddenFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "nameid" } })
+                        @Html.HiddenFor(model => model.QuestionNo, new { htmlAttributes = new { @class = "form-control" } })
+                        <input type="hidden" name="Status" Value="Checked" />
+                        <input type="hidden" id="Marks" name="Marks" Value="@Model.Marks" />
+                        <input type="hidden" id="Answer" name="Answer" value="@Model.Answer" />
+                        <input type="hidden" id="QuestionNo" name="QuestionNo" Value="@Model.QuestionNo" />
+                    </div>
+
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Id)
+                    <div class="form-group">
+                        <div class="row">
+
+                            <div class="col-md-offset-2 col-md-8">
+                            </div>
+                            <div class="col-md-2">
+                                <h2>@Model.Marks Marks</h2>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-control" style="height: 210px;width:100%;overflow-y: auto">
+                                <h3>Problem</h3>
+                                @Html.Raw(Model.QuestionNo)
+                            </div>
+                        </div>
+                    </div><br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-control" style="height: 210px;width:100%;overflow-y: auto">
+                                @Html.Raw(Model.Answer)
+                            </div>
+                        </div>
+                    </div><br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            @for (int i = 0; i < 10; i++)
+                            {
+                                if (Model.Id.Equals(obje[i].Id))
+                                {
+                                    if (i == 0)
+                                    {
+                                        prev =
+                                            obje[i].Id;
+                                    }
+                                    else
+                                    {
+                                        prev =
+                                            obje[i - 1].Id;
+                                    }
+                                }
+                            }
+                            @for (int i = 0; i < 10; i++)
+                            {
+                                if (Model.Id.Equals(obje[i].Id))
+                                {
+                                    if (i == 9)
+                                    {
+                                        next =
+                                            obje[i].Id;
+                                    }
+                                    else
+                                    {
+                                        next =
+                                            obje[i + 1].Id;
+                                    }
+                                }
+                            }
+                            @{ var url = "/Admin/Edit1/" + prev;}
+                            @{ var urlnext = "/Admin/Edit1/" + next;}
+                            <a href=@url class="btn btn-primary col-md-offset-1">Previous</a>
+
+
+                            <a href=@urlnext class="btn btn-primary col-md-offset-8 ">Next</a>
+                        </div>
+
+                    </div>
+                    <div class="col">
+
+                        @Html.ActionLink("Back to List", "Index1")
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-3" style="padding: 10px">
+            <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding:40px;border-radius: 5px">
+                <p><b>QuestionNo</b></p>
+                @{
+                    foreach (var obj in (List<ExamDetail>)ViewBag.ExamDetail)
+                    {
+                        count = count + 1;
+                        if (obj.Id == Model.Id && obj.Status.Equals("Checked"))
+                        {
+                            attempt = attempt + 1;
+                            @Html.ActionLink(count.ToString(), "Edit1", new {controller = "Admin", id = obj.Id},
+                                new {@class = "pagination active"})
+                        }
+                        else if (obj.Id == Model.Id)
+                        {
+                            @Html.ActionLink(count.ToString(), "Edit1", new {controller = "Admin", id = obj.Id},
+                                new {@class = "pagination active"})
+                        }
+                        else if (obj.AMarks.Equals("0") && obj.Status.Equals("UnChecked"))
+                        {
+
+
+
+                            @Html.ActionLink(count.ToString(), "Edit1", new {controller = "Admin", id = obj.Id},
+                                new {@class = "pagination danger"})
+                        }
+                        else
+                        {
+                            {
+                                attempt = attempt + 1;
+                            }
+
+                            @Html.ActionLink(count.ToString(), "Edit1", new {controller = "Admin", id = obj.Id},
+                                new {@class = "pagination success"})
+                        }
+
+                    }
+                }
+
+            </div>
+           
+                <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+                    @if (Model.Status.Equals("UnChecked"))
+                    {
+                        <h4 style="text-align: center">Rate Performance?</h4>
+                        <input type="hidden" id="Percentage" name="AMarks" value="0"/>
+                        <div class="row">
+
+                            <div class="col-md-2" style="text-align: center;" title="Zero"><i class="far fa-angry AMarks4" style="font-size: 45px;margin-left:0px;" id="em1" onclick="AssignZero()"></i></div>
+                            <div class="col-md-2" style="text-align: center" title="25%"><i class="far fa-frown AMarks3" id="em2" style="font-size: 45px" onclick="AssignOne()"></i></div>
+                            <div class="col-md-2" style="text-align: center" title="50%"><i class="far fa-smile AMarks2" id="em3" style="font-size: 45px" onclick="AssignTwo()"></i></div>
+                            <div class="col-md-2" style="text-align: center" title="75%"><i class="far fa-grin-hearts AMarks1" id="em4" style="font-size: 45px" onclick="AssignThree()"></i></div>
+                            <div class="col-md-2" style="text-align: center" title="100%"><i class="far fa-grin-stars AMarks" id="em5" style="font-size: 45px" onclick="AssignFour()"></i></div>
+                            <div class="col-md-2" style="text-align: center"></div>
+                        </div>
+                        <br/>
+
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <input type="submit" value="Assign Marks" class="btn btn-success"/>
+                            </div>
+                        </div>
+                        <br/>
+                    }
+                    else if (attempt==10)
+                    {
+                        <h4>Details Will be Posted to the HomePage</h4>
+                       @Html.ActionLink("PostMarks","PostMarks",new {name=Model.Name},new {@class="btn btn-success"})
+                    }
+                    else
+                        {
+     
+                            <table class="table table-bordered table-striped">
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Marks Assigned</th>
+                                </tr>
+                                <tr>
+                                    <td>@Model.Status</td>
+                                    <td>@Model.AMarks Marks</td>
+                                </tr>
+                            </table>
+
+                        }
+                    
+
+                </div>
+            
+            </div>
+
+        <script>
+            function clearallcolors() {
+                document.getElementById('em1').style.removeProperty("background-color");
+                document.getElementById('em2').style.removeProperty("background-color");
+                document.getElementById('em3').style.removeProperty("background-color");
+                document.getElementById('em4').style.removeProperty("background-color");
+                document.getElementById('em5').style.removeProperty("background-color");
+            }
+            
+
+     
+
+            function AssignZero() {
+
+                clearallcolors();
+                var a = document.getElementById("Percentage").value = 0;
+                document.getElementById("em1").style.borderRadius = "50%";
+                document.getElementById("em1").style.backgroundColor = "Red";
+            }
+
+            function AssignOne() {
+                clearallcolors();
+                var a = (document.getElementById("Marks").value)*0.25;
+                document.getElementById("Percentage").value = a;
+                document.getElementById("em2").style.borderRadius = "50%";
+                document.getElementById("em2").style.backgroundColor = "#bdb76b";
+
+
+            }
+
+            function AssignTwo() {
+                clearallcolors();
+                var a = (document.getElementById("Marks").value)*0.50;
+                document.getElementById("Percentage").value = a;
+                document.getElementById("em3").style.borderRadius = "50%";
+                document.getElementById("em3").style.backgroundColor = "#ffd700";
+
+            }
+
+            function AssignThree() {
+                clearallcolors();
+                var a = (document.getElementById("Marks").value) *0.75 ;
+                document.getElementById("Percentage").value = a;
+                document.getElementById("em4").style.borderRadius = "50%";
+                document.getElementById("em4").style.backgroundColor = "#1e88e5";
+            }
+
+            function AssignFour() {
+                clearallcolors();
+                var a = (document.getElementById("Marks").value);
+                document.getElementById("Percentage").value = a;
+                document.getElementById("em5").style.borderRadius = "50%";
+                document.getElementById("em5").style.backgroundColor = "#4caf50";
+            }
+
+        </script>
+
+</div>
+
+
+}
+
+
+

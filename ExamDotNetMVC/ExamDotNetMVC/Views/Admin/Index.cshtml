@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ExamDotNetMVC.Models.AddQuestion>
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="container" style="box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+    <h2>Index</h2>
+
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <div style="height:490px;overflow-y: auto">
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Question)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.QLevel)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Marks)
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.Raw(item.Question)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QLevel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Marks)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Questionid }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Questionid }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Questionid })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>

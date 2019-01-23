@@ -1,0 +1,68 @@
+﻿@model ExamDotNetMVC.Models.UserDetail
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>UserDetail</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Experience)
+        </dt>
+
+        <dd>
+            @{
+                var exp = Model.Experience;
+                switch (exp)
+                {
+                    case 1:
+                        <p>0-1 Years</p>
+                        break;
+                    case 2:
+                        <p>2-5 Years</p>
+                        break;
+                    case 3:
+                        <p>6-8 Years</p>
+                        break;
+                    case 4:
+                        <p>>8 Years</p>
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+
+    </dl>
+</div>
+<p>
+</p>

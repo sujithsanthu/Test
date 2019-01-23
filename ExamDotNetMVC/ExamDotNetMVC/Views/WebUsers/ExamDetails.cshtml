@@ -1,0 +1,609 @@
+﻿@model ExamDotNetMVC.Models.ExamDetail
+@using ExamDotNetMVC.Models
+@{
+    ViewBag.Title = "ExamDetails";
+    ViewBag.time = DateTime.Now.AddMinutes(20);
+    var count = 0;
+
+    var obje = (List<ExamDetail>)ViewBag.ExamDetail;
+    var Intial = (ExamDetail)ViewBag.Initial;
+
+}
+<style>
+    .fontStyle {
+        font-family: calibri;
+        font-size: 15px;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<div id="StartPage" class="container" style="box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px;background-color: #f1f1f1;">
+    <div style="padding: 10px;height: 650px;overflow-y: auto;background-color: white;border-left:4px solid #337ab7">
+        <br />
+        <br />
+        <h3><b>Read the following Instructions</b></h3>
+        <ol>
+            <li style="font-size: 21px"><p>If you click on the Start Exam tab you will be redirected to Exam Page</p></li>
+            <li style="font-size: 21px"><p>The Time for the Exam is 30 Minutes,After 30 Minutes Exam will be automatically submitted</p></li>
+            <li style="font-size: 21px"><p>Save answer before going to next question or previous question</p></li>
+            <li style="font-size: 21px"><p>save your answers before submitting or exiting the test</p></li>
+            <li style="font-size: 21px"><p>While writing the Exam if you Click on Exit Exam Button the Exam will be Submitted</p></li>
+            <li style="font-size: 21px"><p>If you visit other websites or open other tabs or refresh the page the Exam will be submitted automatically</p></li>
+            <li style="font-size: 21px"><p>Marks For each Question will differ</p></li>
+            <li style="font-size: 21px"><p>Mobile Phones or other Electronic Gadgets are strictly prohibited</p></li>
+        </ol>
+    </div><br />
+    <input type="button" class="btn btn-primary col-md-offset-10" onclick="Start()" value="Start Exam" />
+</div>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="~/Scripts/rereturn.js"></script>
+
+<style>
+    .pagination {
+        padding: 10px;
+        background-color: white;
+        border-radius: 50%;
+        border: 2px solid #2e6da4;
+        height: 45px;
+        width: 45px;
+        text-align: center;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+        .pagination:hover {
+            color: white;
+            background-color: #2e6da4;
+        }
+
+    .paginationlink a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .active {
+        background-color: #2e6da4;
+        color: white;
+        border-color: black;
+    }
+
+    .success {
+        background-color: #4caf50;
+        color: white;
+        border-color: black;
+    }
+
+    .danger {
+        background-color: #e74507;
+        color: white;
+        border-color: black;
+    }
+
+    .AMarks:hover {
+        font-size: 42px;
+        background-color: #4caf50;
+        border-radius: 50%;
+    }
+
+    .AMarks1:hover {
+        font-size: 42px;
+        background-color: #00fa9a;
+        border-radius: 50%;
+    }
+
+    .AMarks2:hover {
+        font-size: 42px;
+        background-color: #ffd700;
+        border-radius: 50%;
+    }
+
+    .AMarks3:hover {
+        font-size: 42px;
+        background-color: #bdb76b;
+        border-radius: 50%;
+    }
+
+    .AMarks4:hover {
+        font-size: 42px;
+        background-color: #ff0000;
+        border-radius: 50%;
+    }
+
+    .act {
+        background-color: #2e6da4;
+        color: white;
+    }
+
+    .arrange {
+        background-color: red;
+    }
+</style>
+<noscript>
+    <h2>
+        JavaScript is disabled! Why you want to do so?
+        Please enable JavaScript in your web browser!
+    </h2>
+
+    <style type="text/css">
+        #ExamPage {
+            display: none;
+        }
+    </style>
+</noscript>
+<script>
+
+    function LoginRequired() {
+        var a;
+        swal({
+            title: "Are you sure?",
+            text: "Once Submitted, you will not be able to answer anymore",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    a = "Submited";
+                    Quit(a);
+
+
+                } else {
+                    swal("You can proceed with the Exam!");
+                }
+
+            });
+    }
+    function Quit(a) {
+        if (a == "Submited") {
+            Save();
+            setCookie("minutes", minutes.toString(), 0);
+            setCookie("seconds", seconds.toString(), 0);
+            document.getElementById("myForm").action = "/WebUsers/Final";
+            document.getElementById("myForm").submit();
+        }
+    }
+</script>
+@using (Html.BeginForm("Final", "WebUsers", FormMethod.Post, new { @id = "myForm" }))
+{
+    <div id="ExamPage" class="row" style="display: none">
+        <div class="col-md-9" style="padding: 10px">
+            <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+                <div class="form-horizontal">
+                    <div style="display: none">
+                        <input type="hidden" id="QuestionNo" name="QuestionNo" value="intial" />
+                        <input type="hidden" id="Status" name="Status" Value="UnChecked" />
+                        <input type="hidden" id="Name" name="Name" value="" />
+                        <input type="hidden" id="Marks" name="Marks" value="" />
+                        <input type="hidden" id="AMarks" name="AMarks" value="" />
+                        <input type="hidden" id="Id" name="Id" value="" />
+                        <input type="hidden" id="Intial" name="Intial" Value="@Intial.Id" />
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-offset-2 col-md-8">
+                            </div>
+                            <div class="col-md-2">
+
+                                <h2>@Model.Marks Marks</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-control" style="height: 210px;width:100%;overflow-y: auto">
+                                <h4>Problem</h4>
+                                <h3 id="Question"></h3>
+                            </div>
+                        </div>
+                    </div><br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea id="Answer" name="Answer"></textarea>
+
+                            @*<textarea class="form-control" style="height: 210px;width:100%;overflow-y: auto"></textarea>*@
+                        </div>
+                    </div><br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            @*<button type="button" class="btn btn-primary col-md-offset-2" onclick="getQuestion(parseInt(document.getElementById('Id').value) - 1)" id="btnPrev">Previous</button>*@
+                            <input id="Prev" type="button" value="Prev" class="btn btn-success col-md-1" onclick="Save(); getQuestion(parseInt(document.getElementById('Id').value) - 1); " />
+                            <input id="save" type="button" value="Save & Next" class="btn btn-success col-md-offset-10" onclick="Save(); getQuestion(parseInt(document.getElementById('Id').value) + 1); " />
+                            <input id="finish" type="button" value="Save" class="btn btn-success col-md-offset-10" onclick="Save(); Add();" />
+                            @*<button type="button" class="btn btn-primary" onclick="getQuestion(parseInt(document.getElementById('Id').value) + 1)" id="btnNext">Next</button>*@
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div id="div3" class="btn btn-success col-md-offset-6" style="display:none;">Saved Successfully</div>
+            <div id="div3" class="btn btn-success col-md-offset-6" style="display:none;">Error</div>
+        </div>
+        <div class="col-sm-3" style="padding: 10px">
+            <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding:21px;border-radius: 5px;">
+                <div style="overflow-x:auto">
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <th style="text-align: center;font-size: 21px"><span style="font-family: Calibri;">Minutes</span></th>
+                            <th style="text-align: center;font-size: 21px"><span style="font-family: Calibri;">Seconds</span></th>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;font-size: 21px" id="Minutes">
+                                <div></div>
+                            </td>
+                            <td style="text-align: center;font-size: 21px">
+                                <div id="Seconds"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                </div>
+                <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding:21px;border-radius: 5px">
+                    <p><b>QuestionNo</b></p>
+                    @{
+                        foreach (var obj in (List<ExamDetail>)ViewBag.ExamDetail)
+                        {
+                            count = count + 1;
+                            <div id="@obj.Id" class=" pagination" onclick="Remove();getQuestion(@obj.Id);Pagination(this.id)">@count.ToString()</div>
+                        }
+                    }
+
+                </div>
+
+                <div style="margin: 15px;box-shadow: 1px 1px 21px gray;padding: 15px;border-radius: 5px">
+
+                    <div style="overflow-x:auto">
+
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>No of Questions</th>
+                                <th>Questions Attempted</th>
+                                <th>Question UnAttempted</th>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td id="Attempted"></td>
+                                <td id="UnAttempted"></td>
+                            </tr>
+
+
+                        </table>
+
+                    </div>
+                    <input class="btn btn-danger" value="Exit Exam" type="button" onclick="LoginRequired()" />
+                </div>
+
+            </div>
+    </div>
+
+    <script>
+
+        function OnChangeText(element) {
+            element.value = '';
+        }
+
+
+        //  alert(document.getElementById("Intial").value);
+        getQuestion(document.getElementById("Intial").value);
+        Pagination(document.getElementById("Intial").value);
+        Marks(document.getElementById("Intial").value);
+        function Remove() {
+            $('#Answer').froalaEditor('destroy');
+        }
+        function Add() {
+            $('#Answer').froalaEditor();
+        }
+
+        function getQuestion(id) {
+            //launchIntoFullscreen(document.documentElement);
+            document.getElementById("finish").style.display = "none";
+            document.getElementById("save").style.display = "block";
+            if (id == @Intial.Id) {
+                document.getElementById("Prev").style.display = "none";
+            } else {
+                document.getElementById("Prev").style.display = "block";
+            }
+                
+            
+
+            Pagination(id);
+            Marks(id);
+
+            //alert("current" + id);
+            //alert(document.getElementById("Intial").value);
+            var a = parseInt(document.getElementById("Intial").value) + 9;
+            var b = parseInt(document.getElementById("Intial").value);
+            //alert(a);
+            if (a == id) {
+                document.getElementById("finish").style.display = "block";
+
+                document.getElementById("save").style.display = "none";
+            }
+
+
+            document.getElementById("Answer").value = '';
+
+            //alert(id);
+            var URL = 'http://localhost:53349/api/ExamDetailsAPI/' + id;
+            $.ajax(
+                {
+                    url: URL,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data, status, xhr) {
+
+
+                        document.getElementById("QuestionNo").value = data.QuestionNo;
+                        document.getElementById("Question").innerHTML = data.QuestionNo;
+                        document.getElementById("Answer").value = data.Answer;
+
+                        document.getElementById("Marks").value = data.Marks;
+                        document.getElementById("Name").value = data.Name;
+                        document.getElementById("Status").value = data.Status;
+                        document.getElementById("Id").value = data.Id;
+                        document.getElementById("AMarks").value = data.AMarks;
+                        $('#Answer').froalaEditor();
+
+                    },
+                    error: function (xhr, status, error) {
+                        alert(error);
+                    }
+                });
+        }
+
+        function Marks(id) {
+            var URL = 'http://localhost:53349/api/ExamDetailsAPI/Marks/' + id;
+            $.ajax(
+                {
+                    url: URL,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data, status, xhr) {
+
+
+                        document.getElementById("UnAttempted").innerHTML = data.UnAttempted;
+                        document.getElementById("Attempted").innerHTML = data.Attempted;
+
+                    },
+                    error: function (xhr, status, error) {
+                        alert(error);
+                    }
+                });
+        }
+
+        function Save() {
+            //alert("SAVE");
+            $('#Answer').froalaEditor('destroy');
+            var question = document.getElementById("QuestionNo").value;
+            //document.getElementById("Answer").value = data.Answer;
+            var answer = document.getElementById("Answer").value;
+            var marks = document.getElementById("Marks").value;
+            var name = document.getElementById("Name").value;
+            var status = document.getElementById("Status").value;
+            var id = document.getElementById("Id").value;
+            var amarks = document.getElementById("AMarks").value;
+            var URL = 'http://localhost:53349/api/ExamDetailsAPI/' + id;
+
+            //alert(URL);
+            $.ajax(
+                {
+                    url: URL,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        AMarks: amarks,
+                        Answer: answer,
+                        Id: id,
+                        Marks: marks,
+                        Name: name,
+                        QuestionNo: question,
+                        Status: "UnChecked"
+                    }),
+                    dataType: 'json',
+                    success: function (data, xhr, status) {
+                        $("#div3").fadeIn(100).fadeOut(700);
+                        Marks(id);
+                        // alert("success");
+                    },
+                    error: function (xhr, status, error) {
+                        //alert(error);
+                    }
+                });
+            //$('#Answer').froalaEditor();
+            //document.getElementsByClassName("pagination").style.color = "Green";
+
+        }
+
+        //$(function () {
+        //    //$("form").attr("action", "/WebUsers/Edit1")
+        //    //$('#Answer').froalaEditor();
+        //});
+
+        var minutes = 1;
+        var seconds = 0;
+
+        function startTimer(duration, Minutes, Seconds) {
+            var timer = duration,
+                minutes,
+                seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                Minutes.textContent = minutes;
+                Seconds.textContent = seconds;
+                
+
+                setCookie("minutes", minutes.toString(), 1);
+                setCookie("seconds", seconds.toString(), 1);
+
+                if (--timer < 0) {
+                    timer = 0;
+                    if (seconds == 00 && minutes == 0) {
+                       
+                        Quit("Submited");
+
+                    }
+                   
+
+                }
+            },
+                1000);
+        }
+
+
+
+
+        $(document).keydown(function (e) {
+            if (e.ctrlKey && e.which == 9) {
+                alert("ctrl");
+                //e.preventDefault();
+
+            }
+
+        });
+
+        function Pagination(id) {
+            //document.getElementById(id).style.backgroundColor = "#2e6da4";
+            //document.getElementById(id).style.color = "white";
+            $("div").removeClass("act");
+            $("#" + id).addClass("act");
+        }
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires;
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            }
+            return "";
+        }
+
+        function deleteAllCookies() {
+            //alert("delere")
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++)
+                deleteCookie(cookies[i].split("=")[0] + " =; expires = Thu, 01 Jan 1970 00:00:00 UTC");
+        }
+
+        function deleteCookie(name) {
+            setCookie(name, "", -1);
+        }
+
+    </script>
+    <script>
+
+        function Start() {
+            setCookie("minutes", minutes.toString(), 0);
+            setCookie("seconds", seconds.toString(), 0);
+            var minutes_data = getCookie("minutes");
+            var seconds_data = getCookie("seconds");
+            var timer_amount = (60 * 30); //default
+            if (!minutes_data || !seconds_data) {
+                //no cookie found use default
+            } else {
+                timer_amount = parseInt(minutes_data * 60) + parseInt(seconds_data)
+            }
+
+            var fiveMinutes = timer_amount,
+                Minutes = document.querySelector('#Minutes');
+            Seconds = document.querySelector('#Seconds');
+            startTimer(fiveMinutes, Minutes, Seconds); //`enter code here`
+            document.addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+            }, false);
+            document.addEventListener("keydown",
+                function (e) {
+
+                    // "F12" key
+                    if (event.keyCode == 123
+                        ||
+
+                        event.keyCode == 122 ||
+
+                        event.keyCode == 121 ||
+
+                        event.keyCode == 120 ||
+
+                        event.keyCode == 119 ||
+
+                        event.keyCode == 118 ||
+
+                        event.keyCode == 117 ||
+
+                        event.keyCode == 116 ||
+
+                        event.keyCode == 115 ||
+
+                        event.keyCode == 114 ||
+
+                        event.keyCode == 113 ||
+
+                        event.keyCode == 112 ||
+
+                        event.keyCode == 17) {
+                        disabledEvent(e);
+                    }
+                    else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {
+                        disabledEvent(e);
+                    }
+                    else if (event.ctrlKey && event.keyCode == 73) {
+                        disabledEvent(e);
+                    }
+                }, false);
+            function disabledEvent(e) {
+                if (e.stopPropagation) {
+                    e.stopPropagation();
+                } else if (window.event) {
+                    window.event.cancelBubble = true;
+                }
+                e.preventDefault();
+                return false;
+            }
+            document.getElementById("StartPage").style.display = 'none';
+            document.getElementById("ExamPage").style.display = 'block';
+            Add();
+            //launchIntoFullscreen(document.documentElement);
+        }
+
+        //function FullPage() {
+        //    launchIntoFullscreen(document.documentElement);
+        //}
+
+        function launchIntoFullscreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+    </script>
+    @Html.Partial("_ScriptSharing")
+}
+
+
+
+
+
+
+
+
+
+
